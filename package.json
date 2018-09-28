@@ -1,0 +1,17 @@
+{
+  "name": "discord-last-fm",
+  "version": "1.0.0",
+  "description": "Displays Last.fm now playing data as a Discord status",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["Discord", "Last.fm"],
+  "author": "Michael Tugby",
+  "license": "ISC",
+  "dependencies": {
+    "discord-rpc": "^3.0.0",
+    "dotenv": "^6.0.0",
+    "lastfm": "git+https://github.com/Icestorm05/lastfm-node.git"
+  }
+}
