@@ -46,8 +46,8 @@ exports.getNowPlaying = async({username, apiKey}) => {
 
 /**
  * Compares two track objects and determines the event currently occuring.
- * @param {Object} prev The previous track object.
- * @param {Object} curr The latest track object.
+ * @param {Object | null} prev The previous track object.
+ * @param {Object | null} curr The latest track object.
  * @return {Object} An event object in the form { event: String, track: Object }.
  */
 exports.getEvent = (prev, curr) => {

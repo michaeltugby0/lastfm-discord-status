@@ -15,11 +15,15 @@ client.on("ready", () => {
     let prev;
     setInterval(async() => {
         try {
+            // Attempt to get the track now playing on user's Last.fm profile.
             const curr = await getNowPlaying({
                 username: process.env.LAST_FM_USERNAME,
                 apiKey: process.env.LAST_FM_API_KEY,
             });
+            // Get the event currently occuring by comparing the previous track polled to the latest.
             const { event, track } = getEvent(prev, curr);
+
+            // A new track is now playing, so set the discord status to that track.
             if (event === "nowPlaying") {
                 const startTimestamp = new Date();
                 await client.setActivity({
@@ -33,10 +37,14 @@ client.on("ready", () => {
                     instance: false,
                 });
                 console.log(`Now playing ${track.name} by ${track.artist['#text']}`);
+
+            // Track stopped playing, so clear the Discord status.
             } else if (event === "stoppedPlaying") {
                 await client.clearActivity();
                 console.log(`Stopped playing ${track.name} by ${track.artist['#text']}`);
             }
+
+            // Set the previous track to the current, to be compared to a new track in the next iteration.
             prev = curr;
         } catch (err) {
             console.error(err);
