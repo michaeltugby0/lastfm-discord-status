@@ -6,12 +6,15 @@
   "scripts": {
     "start": "node index.js"
   },
-  "keywords": ["Discord", "Last.fm"],
+  "keywords": [
+    "Discord",
+    "Last.fm"
+  ],
   "author": "Michael Tugby",
   "license": "ISC",
   "dependencies": {
     "discord-rpc": "^3.0.0",
     "dotenv": "^6.0.0",
-    "lastfm": "git+https://github.com/Icestorm05/lastfm-node.git"
+    "request": "^2.88.0"
   }
 }

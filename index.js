@@ -1,6 +1,6 @@
 require("dotenv").config();
 const RPC = require("discord-rpc");
-const { LastFmNode } = require("lastfm");
+const { getEvent, getNowPlaying } = require("./lastfm");
 const client = new RPC.Client({ transport: "ipc" });
 
 if (!process.env.DISCORD_CLIENT_ID || !process.env.LAST_FM_API_KEY || !process.env.LAST_FM_SECRET || !process.env.LAST_FM_USERNAME) {
@@ -11,31 +11,20 @@ const clientId = process.env.DISCORD_CLIENT_ID;
 
 RPC.register(clientId);
 
-const LastFM = new LastFmNode({
-    api_key: process.env.LAST_FM_API_KEY,
-    secret: process.env.LAST_FM_SECRET,
-});
-
-const LastFMStream = LastFM.stream(process.env.LAST_FM_USERNAME);
-
 client.on("ready", () => {
-    LastFMStream.on("stoppedPlaying", async() => {
+    let prev;
+    setInterval(async() => {
         try {
-            await client.clearActivity().catch(console.error);
-            console.log("Stopped listening.");
-        } catch (err) {
-            console.error(err);
-        }
-    });
-    LastFMStream.on("nowPlaying", async(track) => {
-        if (track['@attr'] && track['@attr'].nowplaying) {
-            const artist = track.artist['#text'];
-            const song = track.name;
-            const startTimestamp = new Date();
-            try {
+            const curr = await getNowPlaying({
+                username: process.env.LAST_FM_USERNAME,
+                apiKey: process.env.LAST_FM_API_KEY,
+            });
+            const { event, track } = getEvent(prev, curr);
+            if (event === "nowPlaying") {
+                const startTimestamp = new Date();
                 await client.setActivity({
-                    details: song,
-                    state: `by ${artist}`,
+                    details: track.name,
+                    state: `by ${track.artist['#text']}`,
                     startTimestamp,
                     largeImageKey: process.env.LARGE_IMAGE_KEY,
                     largeImageText: process.env.LARGE_IMAGE_TOOLTIP,
@@ -43,14 +32,16 @@ client.on("ready", () => {
                     smallImageText: process.env.SMALL_IMAGE_TOOLTIP,
                     instance: false,
                 });
-                console.log(`Now listening to ${song} by ${artist}.`);
-            } catch (err) {
-                console.error(err);
+                console.log(`Now playing ${track.name} by ${track.artist['#text']}`);
+            } else if (event === "stoppedPlaying") {
+                await client.clearActivity();
+                console.log(`Stopped playing ${track.name} by ${track.artist['#text']}`);
             }
+            prev = curr;
+        } catch (err) {
+            console.error(err);
         }
-    });
-    LastFMStream.on("error", console.error);
-    LastFMStream.start();
+    }, 5000);
 });
 
 client.login({ clientId }).catch(console.error);
