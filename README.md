@@ -14,6 +14,7 @@ You will need to create a .env file in the root directory and set the following 
 DISCORD_CLIENT_ID=`Enter your Discord Application Client ID here`  
 LAST_FM_API_KEY=`Enter your Last.fm API key here`  
 LAST_FM_USERNAME=`Enter your Last.fm username here`  
+LAST_FM_SECRET=`Enter your Last.fm Shared Secret`  
 LARGE_IMAGE_KEY=`Enter your Discord Application Large Image Key here (optional)`  
 LARGE_IMAGE_TOOLTIP=`Enter your Discord Application Large Image Text here (optional)`  
 SMALL_IMAGE_KEY=`Enter your Discord Application Small Image Key here (optional)`  
